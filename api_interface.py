@@ -16,17 +16,12 @@ DOTENV_PATH = './.env'
 OPENROUTER_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="OPENROUTER_API_KEY")
 GEMINI_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="GEMINI_API_KEY")
 
-MODELS = [
-    "xiaomi/mimo-v2-flash:free",
-    "xiaomi/mimo-v2-flash:free",
-    "xiaomi/mimo-v2-flash:free",
-    # "openai/gpt-5.2",
-    # "deepseek/deepseek-v3.2",
-    # "google/gemini-3-flash-preview",
-    # "anthropic/claude-sonnet-4.5",
-    "google/gemini-2.0-flash-lite-001",
-    "meta-llama/llama-3.1-405b-instruct:free"
-]
+class LessonPlan(BaseModel):
+    # The lesson plan name
+    subtopics: List[str] = Field(description="The lesson's subtopics, e.g. what needs to be taught for the topic to be understood")
+
+# Gemini client for gemini api calls
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 def prompt_AI(prompt:str, constraints, model="google/gemini-2.0-flash-lite-001", service="openrouter", temperature=0) -> dict:
     init_time = int(time.time()) # get the initial call time
@@ -45,7 +40,8 @@ def prompt_AI(prompt:str, constraints, model="google/gemini-2.0-flash-lite-001",
                     "response_format": { "type": "json_object" },
                     "messages": [
                         { "role": "system", "content": constraints },
-                        { "role": "user", "content": prompt }
+                        { "role": "user", "content": prompt },
+                        { "role": "assistant", "content": "{" }
                     ],
                     "temperature": temperature,
                     "provider": {
@@ -60,7 +56,7 @@ def prompt_AI(prompt:str, constraints, model="google/gemini-2.0-flash-lite-001",
             if(not 'choices' in responsedict.keys()):
                 # If there aren't any responses, it's a fail
                 if('error' in responsedict): 
-                    error_info = responsedict['error']['metadata']['raw']
+                    error_info = str(responsedict['error'])
                 raise Exception(responsedict)
 
             # Show the responses array (we only evaluate the first one though)
@@ -102,5 +98,6 @@ def prompt_AI(prompt:str, constraints, model="google/gemini-2.0-flash-lite-001",
             'message': error_info,
             'status': 'fail'
         }
-    
-print(prompt_AI('Why is the sky blue?', 'Reply in one sentence or less. Name your response key "response".', model='google/gemini-2.0-flash-lite-001'))
+
+if __name__ == '__main__':
+    print(prompt_AI('Why is the sky blue?', 'Reply in one sentence or less. Name your response key "response".', model='google/gemini-2.0-flash-lite-001'))

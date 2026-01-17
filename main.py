@@ -2,40 +2,26 @@
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 # File and data management
-import os
-import dotenv
-import requests, json
 import time
+import json
 # Threads
 import threading
 from concurrent.futures import ThreadPoolExecutor
-# AI agent
-from google import genai
-from pydantic import BaseModel, Field
-from typing import List, Optional
 
-class LessonPlan(BaseModel):
-    # The lesson plan name
-    subtopics: List[str] = Field(description="The lesson's subtopics, e.g. what needs to be taught for the topic to be understood")
-
-DOTENV_PATH = './.env'
-OPENROUTER_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="OPENROUTER_API_KEY")
-GEMINI_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="GEMINI_API_KEY")
+# Consistent strategy for querying AIs
+import api_interface
 
 MODELS = [
     "xiaomi/mimo-v2-flash:free",
     "xiaomi/mimo-v2-flash:free",
     "xiaomi/mimo-v2-flash:free",
-    # "openai/gpt-5.2",
-    # "deepseek/deepseek-v3.2",
+    "deepseek/deepseek-v3.2",
     # "google/gemini-3-flash-preview",
     # "anthropic/claude-sonnet-4.5",
-    "openai/gpt-oss-120b:free",
-    "allenai/molmo-2-8b:free"
+    #"openai/gpt-oss-120b", # Costs $$  ELIMINATED due to refusing instructions
+    #"allenai/molmo-2-8b:free", # Eliminated due to refusing instructions
+    "google/gemini-2.0-flash-lite-001" # Costs $$
 ]
-
-# Gemini client will be used for overall research and management
-gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # APP INIT
 app = Flask(__name__)
@@ -50,7 +36,6 @@ def home():
 @app.route('/api/prompt', methods=['POST'])
 def execute_prompt():
     # Save the initial time and JSON arguments
-    init_time = time.time()
     args = request.get_json()
 
     # Get the provided arguments
@@ -58,133 +43,67 @@ def execute_prompt():
     model = args.get('model') or "xiaomi/mimo-v2-flash:free"
     constraints = args.get('constraints')
 
-    response = requests.post(
-        url="https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": "Bearer " + OPENROUTER_API_KEY
-        },
-        data=json.dumps({
-            "model": model,
-            "messages": [
-                { "role": "system", "content": constraints },
-                { "role": "user", "content": prompt }
-            ],
-            "temperature": 0
-        })
-    )
-
-    # Get the model API's response as a dictionary
-    responsedict = response.json()
-    if(not 'choices' in responsedict.keys()):
-        # If there aren't any responses, it's a fail
-        return jsonify({
-            "start_time": init_time,
-            "end_time": (time.time()),
-            "tokens": 0,
-            "message": responsedict['error']['message'] if ('error' in responsedict.keys()) else 'Something went wrong',
-            "success": False
-        })
-
-    # Show the responses array (we only evaluate the first one though)
-    choices = responsedict['choices']
-
-    # Get the success and message from the API response
-    try:
-        success = ((len(choices) > 0) and ('message' in choices[0].keys()) and ('content' in choices[0]['message'].keys()))
-        if(not success): raise Exception()      # Shortcut to the failiure method if any properties are mising
-        text = choices[0]['message']['content']
-    except Exception:
-        success = False
-        text = 'Something went wrong.'
-    
-    # Return some useful information
-    result = {
-        # Report the model again, just cause
-        "model": model,
-
-        # Metrics
-        "start_time": init_time,
-        "end_time": (time.time()),
-        "tokens": responsedict['usage']['total_tokens'],
-
-        # Prompt response
-        "message": text,
-        "success": success
-    }
-
-    return jsonify(result)
+    return api_interface.prompt_AI(prompt, constraints, model, temperature=0)
 
 # Topic Management
 topic = "Basic structure of an atom" # What topic the user is responsible for teaching
 lesson_overview = [] # A list of "subtopics" that the user must cover in order to get a good score
 questions = [] # A list of questions asked by each model, anonymized so Gemini isn't biased
 
-# Gemini Methods
-def query_lesson_overview():
-    # Gemini, acting as an expert on the topic, will generate a lesson overview
-    response = gemini_client.models.generate_content(
-        model="gemini-2.5-flash",
-        config=genai.types.GenerateContentConfig(
-            system_instruction='You are an expert on "' + topic + '" teaching at an intermediary level. If you choose to include any math, it should be in KaTeX format, surrounded by $.',
-            temperature=0,
-            response_json_schema=LessonPlan.model_json_schema(),
-            response_mime_type="application/json"
-        ),
-        contents='Generate a short lesson overview in an array for the topic "' + topic + '".' 
-    )
-
-    lo = LessonPlan.model_validate_json(response.text)
-    return lo.subtopics
-
-@app.route('/api/prompt-all', methods=['POST'])
-def promptAll():
+def promptAll(prompt: str, constraints: str):
+    # Save the initial time
     init_time = time.time()
-    args = request.get_json()
-
-    prompt = args.get('prompt')
-    constraints = args.get('constraints')
 
     def query_model(model):
-        response = requests.post(
-            url="https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": "Bearer " + OPENROUTER_API_KEY
-            },
-            data=json.dumps({
-                "model": model,
-                "messages": [
-                    { "role": "system", "content": constraints },
-                    { "role": "user", "content": prompt }
-                ],
-                "temperature": 0.2
-            })
+        # Use the api_interface to prompt the AIs
+        return api_interface.prompt_AI(
+            prompt=prompt,
+            constraints=constraints,
+            model=model,
+            temperature=0.2
         )
-        
-        # Parse the response JSON
-        responsedict = response.json()
-        
-        # Extract relevant data similar to execute_prompt()
-        if 'choices' in responsedict and len(responsedict['choices']) > 0 and 'message' in responsedict['choices'][0]:
-            text = responsedict['choices'][0]['message'].get('content', 'No content')
-            tokens = responsedict.get('usage', {}).get('total_tokens', 0)
-        else:
-            text = responsedict.get('error', {}).get('message', 'Something went wrong')
-            tokens = 0
-        
-        return {
-            "message": text,
-            "tokens": tokens
-        }
 
     # Use ThreadPoolExecutor to run all requests concurrently
     with ThreadPoolExecutor(max_workers=len(MODELS)) as executor:
         responseArray = list(executor.map(query_model, MODELS))
 
-    return jsonify({
+    return {
         "questions": [response["message"] for response in responseArray],
         "total_tokens": sum([response["tokens"] for response in responseArray]),
-        "total_time": time.time() - init_time
-    })
+        "total_time": time.time() - init_time #time elapsed for all AI calls
+    }
+
+@app.route('/api/post-lesson', methods=["POST"])
+def postLesson():
+    global questions, lesson_overview, topic
+    # Takes the user's input lesson data and returns AIs' questions
+    # Save the JSON arguments
+    args = request.get_json()
+    lesson = args.get('lesson')
+    topic = args.get('topic')
+
+    # Append the first piece of data to the lesson overview (the user's input)
+    lesson_overview.append(lesson) 
+    
+    print(lesson_overview)
+
+    # Prompt all AI models concurrently.
+    question_responses = promptAll(f'You are a middle school-level student learning about "${topic}"; The teacher\'s lesson is the following: "${lesson}".\nFind 5 questions to ask the teacher from easy to more challenging to push the teacher with their teaching skills.', constraints="Reply with a list of objects with key 'question' (str) and 'difficulty' (int from 0-3 where 0 is easy). The list should be contained in a single key, 'responses'.")
+
+    print(question_responses)
+
+    questions = question_responses['questions']
+    return jsonify(question_responses)
+
+def query_lesson_overview():
+    # Gemini, acting as an expert on the topic, will generate a lesson overview
+    response = api_interface.prompt_AI(
+        prompt=('Generate a short lesson overview in an array for the topic "' + topic + '".'),
+        constraints=('You are an expert on "' + topic + '" teaching at an intermediary level. If you choose to include any math, it should be in KaTeX format, surrounded by $.'),
+        model="google/gemini-2.0-flash-lite-001"
+    )
+
+    return response
 
 # RUNNER
 if __name__ == "__main__":

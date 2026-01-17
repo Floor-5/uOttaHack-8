@@ -51,7 +51,7 @@ async function promptAllModels(prompt, constraints='Use only one sentence to res
 }
 
 async function submitLesson() {
-    // Get all objects
+    // Get all user-submitted data
     lesson_topic = document.querySelector("#lesson_topic").value.trim()
     lesson_content = document.querySelector("#lesson_content").value.trim()
     loading_icon = document.querySelector("#loading")
@@ -63,13 +63,36 @@ async function submitLesson() {
         return undefined
     }
 
-    allQuestions = promptAllModels(`You are a student learning about "${lesson_topic}"; The teacher's lesson is "${lesson_content}". Find 5 questions to ask the teacher from easy to more challenging to push the teacher with their teaching skills.`, constraints="Only reply with questions, one sentence is length")
+    // Make a POST request. Submits the lesson topic and user lesson overview to the backend, which will reply with AI-generated questions
+    allQuestions = fetch(
+        'http://127.0.0.1:5000/api/post-lesson',
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                topic: lesson_topic,
+                lesson: lesson_content
+            })
+        }
+    ).then(resp => resp.json())
 
+    // Log the promise
     console.log(allQuestions)
 
+    // Wait for the promise to resolve
     allQuestions.then((data) => {
+        // Hide the loading indicators
         loading_icon.style.display = "none"
-        document.querySelector("#questions").innerText = data["questions"].join("\n\n");
-        return data
-    })
+        document.querySelector("#questions").innerText = questionobj.questions.join("\n\n");
+
+        // Parse the JSON inside the data
+        parseddata = [];
+        for(questionarray of data) {
+            parseddata.append(JSON.parse(questionarray))
+        }
+
+        console.log(parseddata);
+    });
+    
+    return data;
 }
