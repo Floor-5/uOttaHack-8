@@ -1,12 +1,19 @@
-# IMPORTS
+# Flask
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
+# File and data management
 import os
 import dotenv
 import requests, json
 import time
+# AI agent
+from google import genai
 
-API_KEY = dotenv.get_key(dotenv_path="./.env", key_to_get="BEN_OPENROUTER")
+DOTENV_PATH = './.env'
+OPENROUTER_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="BEN_OPENROUTER")
+GEMINI_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="BEN_GEMINI")
+
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # APP INIT
 app = Flask(__name__)
@@ -17,7 +24,7 @@ CORS(app)
 def home():
     return render_template("index.html")
 
-# SAMPLE DATA ROUTE
+# POST request for Direct AI agent prompt
 @app.route('/api/prompt', methods=['POST'])
 def execute_prompt():
     # Save the initial time and JSON arguments
@@ -32,7 +39,7 @@ def execute_prompt():
     response = requests.post(
         url="https://openrouter.ai/api/v1/chat/completions",
         headers={
-            "Authorization": "Bearer " + API_KEY
+            "Authorization": "Bearer " + OPENROUTER_API_KEY
         },
         data=json.dumps({
             "model": model,
