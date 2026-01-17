@@ -10,8 +10,8 @@ import time
 from google import genai
 
 DOTENV_PATH = './.env'
-OPENROUTER_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="BEN_OPENROUTER")
-GEMINI_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="BEN_GEMINI")
+OPENROUTER_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="OPENROUTER_API_KEY")
+GEMINI_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="GEMINI_API_KEY")
 
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
