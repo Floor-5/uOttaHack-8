@@ -6,13 +6,22 @@ import os
 import dotenv
 import requests, json
 import time
+# Threads
+import threading
 # AI agent
 from google import genai
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
+class LessonPlan(BaseModel):
+    # The lesson plan name
+    subtopics: List[str] = Field(description="The lesson's subtopics, e.g. what needs to be taught for the topic to be understood")
 
 DOTENV_PATH = './.env'
 OPENROUTER_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="OPENROUTER_API_KEY")
 GEMINI_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="GEMINI_API_KEY")
 
+# Gemini client will be used for overall research and management
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # APP INIT
@@ -91,6 +100,28 @@ def execute_prompt():
     }
 
     return jsonify(result)
+
+# Topic Management
+topic = "Basic structure of an atom" # What topic the user is responsible for teaching
+lesson_overview = [] # A list of "subtopics" that the user must cover in order to get a good score
+questions = [] # A list of questions asked by each model, anonymized so Gemini isn't biased
+
+# Gemini Methods
+def query_lesson_overview():
+    # Gemini, acting as an expert on the topic, will generate a lesson overview
+    response = gemini_client.models.generate_content(
+        model="gemini-2.5-flash",
+        config=genai.types.GenerateContentConfig(
+            system_instruction='You are an expert on "' + topic + '" teaching at an intermediary level. If you choose to include any math, it should be in KaTeX format, surrounded by $.',
+            temperature=0,
+            response_json_schema=LessonPlan.model_json_schema(),
+            response_mime_type="application/json"
+        ),
+        contents='Generate a short lesson overview in an array for the topic "' + topic + '".' 
+    )
+
+    lo = LessonPlan.model_validate_json(response.text)
+    return lo.subtopics
 
 # RUNNER
 if __name__ == "__main__":
