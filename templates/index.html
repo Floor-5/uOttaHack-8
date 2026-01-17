@@ -7,13 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
     <div class="door">
         <h1 class="door-title">Teacher AI</h1>
 
-        <button class="door-btn" onclick="getData()">BEGIN</button>
+        <button class="door-btn" onclick="enterDoor()">BEGIN</button>
 
         <p id="display"></p>
     </div>
+
+    <div id="transition"></div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>   
 </body>

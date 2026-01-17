@@ -8,3 +8,18 @@ async function getData() {
         console.error('Error fetching data:', error);
     }
 }
+
+function enterDoor() {
+    const transition = document.getElementById("transition");
+
+    // Fade out
+    transition.classList.add("active");
+
+    setTimeout(() => {
+        document.body.style.backgroundColor = "#2a2a2a";
+        document.querySelector(".door-title").innerText = "";
+        document.getElementById("display").innerText = "New screen";
+        // fade in 
+        transition.classList.remove("active");
+    }, 600);
+}

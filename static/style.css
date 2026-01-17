@@ -94,4 +94,41 @@ body {
     background-color: #e09f3e;
     transform: translateY(-50%) scale(1.1);
     box-shadow: 6px 6px 0px #4a2f1a, -2px -2px 0px #fff inset;
-} /* aa 
+} 
+
+.fade-out {
+    animation: fadeOut 0.6s steps(6) forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+#transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    image-rendering: pixelated;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+}
+
+#transition.active {
+    animation: pixelFade 0.6s ease forwards;
+}
+
+@keyframes pixelFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
