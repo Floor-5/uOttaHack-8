@@ -17,32 +17,11 @@
     </div>
 
     <div id="transition"></div>
-    <img id="room-image" src="{{ url_for('static', filename='sprites/whiteboard.png') }}" alt="whiteboad" style="display: none; position: absolute; top: 0; left: 17%; width: 65%; height: 65%; image-rendering: pixelated; z-index: 1;">
-    
+    <img id="room-image" src="{{ url_for('static', filename='sprites/whiteboard.png') }}" style="display:none; position:absolute; top:5%; left:10%; width:80%; height:auto; image-rendering:pixelated; z-index:1;">
+    <textarea id="whiteboard-text" placeholder="Write here..." style="display:none; position:absolute; top:18%; left:18%; width:64%; height:50%; z-index:2; background:transparent; border:none; resize:none; outline:none; font-family:'Press Start 2P', monospace; font-size:13px; line-height:1.8; color:#1b1b1b;"></textarea>
 
-<textarea
-  id="whiteboard-text"
-  placeholder="Write here..."
-  style="
-    display: none;
-    position: absolute;
-    top: 10%;
-    left: 22%;
-    width: 55%;
-    height: 45%;
-    z-index: 2;
 
-    background: transparent;
-    border: none;
-    resize: none;
-    outline: none;
 
-    font-family: 'Press Start 2P', monospace;
-    font-size: 12px;
-    line-height: 1.6;
-    color: #1b1b1b;
-  "
-></textarea>
     <script src="{{ url_for('static', filename='script.js') }}"></script>   
 
 </body>

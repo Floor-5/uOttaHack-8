@@ -164,3 +164,15 @@ body {
 #whiteboard-text {
     text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
 }
+
+@keyframes bobble {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-14px); }
+    100% { transform: translateY(0); }
+}
+
+
+.door-title {
+        animation: bobble 2s ease-in-out infinite;
+
+}
