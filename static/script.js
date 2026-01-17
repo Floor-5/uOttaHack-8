@@ -45,3 +45,27 @@ async function getData() {
         console.error('Error fetching data:', error);
     }
 }
+
+async function promptAllModels(prompt, constraints='Use only one sentence to respond.') {
+    s = Date.now()
+    response = await fetch(
+        'http://127.0.0.1:5000/api/prompt-all',
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                prompt,
+                constraints
+            })
+        }
+    ).then(
+        resp => resp.json()
+    )
+    .then(
+        data => {
+            console.log(data);
+            document.querySelector("#display").innerText += data.message + "\n\n\n"
+        }
+    );
+    console.log(`Time: ${(Date.now() - s)/1000}s`)
+}

@@ -21,6 +21,18 @@ DOTENV_PATH = './.env'
 OPENROUTER_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="OPENROUTER_API_KEY")
 GEMINI_API_KEY = dotenv.get_key(dotenv_path=DOTENV_PATH, key_to_get="GEMINI_API_KEY")
 
+MODELS = [
+    "xiaomi/mimo-v2-flash:free",
+    "xiaomi/mimo-v2-flash:free",
+    "xiaomi/mimo-v2-flash:free",
+    # "openai/gpt-5.2",
+    # "deepseek/deepseek-v3.2",
+    # "google/gemini-3-flash-preview",
+    # "anthropic/claude-sonnet-4.5",
+    "openai/gpt-oss-120b:free",
+    "meta-llama/llama-3.1-405b-instruct:free"
+]
+
 # Gemini client will be used for overall research and management
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
@@ -122,6 +134,57 @@ def query_lesson_overview():
 
     lo = LessonPlan.model_validate_json(response.text)
     return lo.subtopics
+
+@app.route('/api/prompt-all', methods=['POST'])
+def promptAll():
+    init_time = time.time()
+    args = request.get_json()
+
+    prompt = args.get('prompt')
+    constraints = args.get('constraints')
+
+    responseArray = []
+
+    for model in MODELS:
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": "Bearer " + OPENROUTER_API_KEY
+            },
+            data=json.dumps({
+                "model": model,
+                "messages": [
+                    { "role": "system", "content": constraints },
+                    { "role": "user", "content": prompt }
+                ],
+                "temperature": 0.2
+            })
+        )
+        
+        # Parse the response JSON
+        responsedict = response.json()
+        
+        # Extract relevant data similar to execute_prompt()
+        if 'choices' in responsedict and len(responsedict['choices']) > 0 and 'message' in responsedict['choices'][0]:
+            text = responsedict['choices'][0]['message'].get('content', 'No content')
+            success = True
+            tokens = responsedict.get('usage', {}).get('total_tokens', 0)
+        else:
+            success = False
+            text = responsedict.get('error', {}).get('message', 'Something went wrong')
+            tokens = 0
+        
+        # Append the processed data
+        responseArray.append({
+            "model": model,
+            "message": text,
+            "success": success,
+            "tokens": tokens,
+            "start_time": init_time,
+            "end_time": time.time()
+        })
+
+    return jsonify(responseArray)
 
 # RUNNER
 if __name__ == "__main__":
