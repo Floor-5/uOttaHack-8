@@ -12,6 +12,7 @@ function enterDoor() {
     const transition = document.getElementById("transition");
     const door = document.querySelector(".door");
     const btn = document.querySelector(".door-btn");
+    const roomImage = document.getElementById("room-image");
 
     btn.disabled = true;
 
@@ -25,6 +26,8 @@ function enterDoor() {
         document.querySelector(".door-title").innerText = "ROOM 2";
         document.getElementById("display").innerText = "You entered a new room!";
         document.body.style.backgroundColor = "#2a2a2a";
+        roomImage.style.display = "block";
+
 
         // Fade overlay back in
         transition.classList.remove("fade-out");
