@@ -109,7 +109,7 @@ class Student {
         document.body.appendChild(this.imgpath);
     }
 }
-
+// a 
 let loadingInterval;
 
 function showLoadingScreen() {
