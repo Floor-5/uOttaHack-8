@@ -18,3 +18,27 @@ It was our first hackathon and first time using AI APIs for all members on the F
 - **Research**: As a lot of this territory was new, we found ourselves doing a lot of research and reading docs instead of designing.
 
 </details>
+
+## Installation Guide
+1. In an empty directory, start by cloning the repository:
+```bash
+git clone https://github.com/Floor-5/uOttaHack-8.git
+```
+2. Install the needed Python requirements
+```bash
+python3 install -r requirements.txt 
+```
+3. Create your own environment file
+```bash
+cp .env.example .env
+```
+4. Add your own keys for the AI models into the `.env` file
+```bash
+OPENROUTER_API_KEY="YOUR_OPENROUTER_API_KEY_HERE"
+GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
+```
+5. Run the app
+```
+python3 main.py
+```
+6. Go to [Localhost 5000](https://localhost:5000) to view the live app

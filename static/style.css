@@ -111,7 +111,7 @@ section {
     transform: translateX(-50%);
     width: 320px;
     height: 600px;
-    background-image: url("/static//sprites/door.svg");
+    background-image: url("/static/sprites/door.svg");
     background-size: cover;
     z-index: 10;
 }
