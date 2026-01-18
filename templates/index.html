@@ -7,29 +7,56 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div id="loading-screen">
-    <div id="loading-text">Loading.</div>
-</div>
-    <div class="door">
-        <h1 class="door-title">Teacher AI</h1>
-
-        <button class="door-btn" onclick="enterDoor()">BEGIN</button>
-
-        <p id="display"></p>
-    </div>
-
+    <section id="loading-screen">
+        <div id="loading-text">Loading.</div>
+    </section>
+    
     <div id="transition"></div>
-    <img id="room-image" src="{{ url_for('static', filename='sprites/whiteboard.png') }}">
-    <textarea id="whiteboard-text" placeholder="Write here..."></textarea>
-    <img id="buttonsec" src="{{ url_for('static', filename='sprites/button.png')}}" onclick="buttonsecclick()">
 
-    <img id="classroom-image" src="{{ url_for('static', filename='sprites/classroom.png') }}">
+    <section id="main-menu">
+        <div class="door">
+            <h1 class="door-title">Teacher AI</h1>
+            <button class="door-btn" onclick="goToWhiteboard()">BEGIN</button>
+            <p id="display"></p>
+        </div>
+    </section>
 
-    <img id="speechBubble" src="{{ url_for('static', filename='sprites/speechBubble.png') }}">
 
-    <svg id="whiteboard-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" onclick="switchToClassroom()"><title>arrow-top-right-circle</title><path d="M21 7V15H20V17H19V18H18V19H17V20H15V21H7V20H5V19H4V18H3V17H2V15H1V7H2V5H3V4H4V3H5V2H7V1H15V2H17V3H18V4H19V5H20V7H21M17 6V5H16V4H14V3H8V4H6V5H5V6H4V8H3V14H4V16H5V17H6V18H8V19H14V18H16V17H17V16H18V14H19V8H18V6H17M8 7H15V14H13V11H12V12H11V13H10V14H9V15H8V14H7V13H8V12H9V11H10V10H11V9H8V7Z" /></svg>
+    <section id="whiteboard">
+        <div>
+            <img id="board" src="{{ url_for('static', filename='sprites/whiteboard.png') }}">
+            <textarea id="board-text" placeholder="Write here..." cols="250" rows="10"></textarea>
+            <svg id="board-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" onclick="goToClassRoom()"><title>arrow-top-right-circle</title><path d="M21 7V15H20V17H19V18H18V19H17V20H15V21H7V20H5V19H4V18H3V17H2V15H1V7H2V5H3V4H4V3H5V2H7V1H15V2H17V3H18V4H19V5H20V7H21M17 6V5H16V4H14V3H8V4H6V5H5V6H4V8H3V14H4V16H5V17H6V18H8V19H14V18H16V17H17V16H18V14H19V8H18V6H17M8 7H15V14H13V11H12V12H11V13H10V14H9V15H8V14H7V13H8V12H9V11H10V10H11V9H8V7Z" /></svg>
+        </div>
+    </section>
+
+    <section id="classroom">
+        <img id="speechBubble" src="{{ url_for('static', filename='sprites/speechBubble.png') }}">
+        <div class="questionBox">
+            <p id="questionAsk">Who invented avocados?</p>
+            <input type="text" id="questionAnswer" placeholder="Type your answer here..." />
+        </div>
+    </section>
+
+    <div id="final-score">
+        <!-- Bg Paper -->
+        <div class="score-paper-shadow-1"></div>
+        <div class="score-paper-shadow-2"></div>
+
+        <!-- Main paper -->
+        <div id="paper">
+            <div class="paper-binding"></div>
+            <div class="paper-lines"></div>
+        </div>
+
+        <!-- Stamp -->
+        <svg id="stamp" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#ff0000" stroke-width="8" opacity="0.8"/>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#ff0000" stroke-width="3" opacity="0.6"/>
+            <text x="107" y="122" font-size="50" font-weight="bold" text-anchor="middle" fill="#ff0000" font-family="Arial, sans-serif">A+</text>
+        </svg>
+    </div>
     
     <script src="{{ url_for('static', filename='script.js') }}"></script>   
-
 </body>
 </html>

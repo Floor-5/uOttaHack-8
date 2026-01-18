@@ -1,3 +1,11 @@
+// DOM ELEMENTS
+const loadingScreenSection = document.querySelector("#loading-screen")
+const transitionElement = document.querySelector("#transition")
+const mainMenuSection = document.querySelector("#main-menu")
+const whiteboardSection = document.querySelector("#whiteboard")
+const classroomSection = document.querySelector("#classroom")
+const finalScoreSection = document.querySelector("#final-score")
+
 let questions = [
     /*{ // A single questioner object. These are grouped according to the LLM that asked them and remain in that order.
         "questions": [ 
@@ -86,74 +94,47 @@ async function submitLesson() {
     
     return questions;
 }
-function enterDoor() {
-    const transition = document.getElementById("transition");
-    const door = document.querySelector(".door");
-    document.getElementById("whiteboard-text").style.display = "block";
 
-    const btn = document.querySelector(".door-btn");
-    const roomImage = document.getElementById("room-image");
+function doTransition(time = 1.5) {
+    transitionElement.style.animation = ``;
+    transitionElement.style.animation = `transitionFade ${time}s ease-in-out forwards`;
+}
 
-    btn.disabled = true;
 
-    // Start fade overlay
-    transition.classList.remove("fade-in");
-    transition.classList.add("fade-out");
-
-    door.classList.add("vanish");
-
+function goToWhiteboard() {
+    doTransition()
     setTimeout(() => {
-        // Swap content behind the door
-        document.querySelector(".door-title").innerText = "ROOM 1";
-        document.getElementById("display").innerText = "You entered the whiteboard room!";
-        document.body.style.backgroundColor = "#c2b280";
-        roomImage.style.display = "block";
-        document.getElementById("whiteboard-svg").style.display = "block";
-
-
-        // Fade overlay back in
-        transition.classList.remove("fade-out");
-        transition.classList.add("fade-in");
-
-        // Re-enable button after fade-in
-        setTimeout(() => btn.disabled = false, 600);
-    }, 600);
+        mainMenuSection.style.display = "none";
+        whiteboardSection.style.display = "block";
+    }, 900)
 }
 
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function switchToClassroom() {
-    const transition = document.getElementById("transition");
-    const roomImage = document.getElementById("room-image");
-    const classroomImage = document.getElementById("classroom-image");
-    const whiteboardSvg = document.getElementById("whiteboard-svg");
-    const whiteboardText = document.getElementById("whiteboard-text");
-    const speechBubble = document.getElementById("speechBubble");
-    // Start fade overlay
-    transition.classList.remove("fade-in");
-    transition.classList.add("fade-out");
-
-    setTimeout(() => {
-        // Swap to classroom
-        document.querySelector(".door-title").innerText = "ROOM 2";
-        document.getElementById("display").innerText = "You entered the classroom!";
-        roomImage.style.display = "none";
-        whiteboardSvg.style.display = "none";
-        whiteboardText.style.display = "none";
-        classroomImage.style.display = "block";
-        speechBubble.style.display = "block";
-    }, 600)
-
-    // Fade overlay back in
-    transition.classList.remove("fade-out");
-    transition.classList.add("fade-in");
-
-    // Show loading screen
+async function goToClassRoom() {
     showLoadingScreen();
-    await wait(3000); // show it for 3 seconds
-    hideLoadingScreen();
+
+    // Make students think here. The following function is for once the promise resolves
+    setTimeout(() => {
+        whiteboardSection.style.display = "none";
+        classroomSection.style.display = "block";
+
+        hideLoadingScreen();
+    }, 1000)
+}
+
+async function goToFinalScore() {
+    showLoadingScreen();
+
+    // Make master model give final grade here. The following function is for once the promise resolves
+    setTimeout(() => {
+        classroomSection.style.display = "none";
+        finalScoreSection.style.display = "block";
+
+        hideLoadingScreen();
+    }, 1000)
 }
 
 let students = [];

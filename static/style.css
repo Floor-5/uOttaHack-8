@@ -1,3 +1,7 @@
+/* ============================================
+   DEFAULT CSS
+   ============================================ */
+
 /* Reset */
 * {
     margin: 0;
@@ -6,27 +10,96 @@
     font-family: 'Press Start 2P', monospace;
 }
 
-/* Hallway background */
+/* Body */
 body {
     min-height: 100vh;
-    background-color: #c2b280; 
+    background-color: #c2b280;
     display: flex;
     justify-content: center;
     align-items: center;
-    image-rendering: pixelated; 
+    image-rendering: pixelated;
 }
 
-/* Door */
+/* Sections base */
+section {
+    display: none;
+    height: 100vh;
+    width: 100vw;
+}
+
+
+/* ============================================
+   LOADING SCREEN & TRANSITION
+   ============================================ */
+
+#loading-screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    font-family: monospace;
+    font-size: 2em;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#loading-text {
+    white-space: pre;
+}
+
+#transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    image-rendering: pixelated;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+}
+
+@keyframes transitionFade {
+    0% { opacity: 0; }
+    45% { opacity: 1; }
+    55% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes fadeOutOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+
+/* ============================================
+   MAIN MENU SECTION
+   ============================================ */
+
+#main-menu {
+    display: none;
+}
+
 .door {
     position: relative;
     width: 320px;
     height: 600px;
-    background-color: #8b5e3c; 
-    border: 4px solid #5e3e2c; 
-    box-shadow: 6px 6px 0px #4a2f1a; 
+    background-color: #8b5e3c;
+    border: 4px solid #5e3e2c;
+    box-shadow: 6px 6px 0px #4a2f1a;
 }
 
-/* Door frame*/
 .door::before {
     content: "";
     position: absolute;
@@ -39,33 +112,17 @@ body {
     z-index: -1;
 }
 
-/* Title */
 .door-title {
     position: absolute;
     top: 40px;
     width: 100%;
     text-align: center;
     color: #fff;
-    font-size: 16px; 
-    text-shadow: 2px 2px #000; 
+    font-size: 16px;
+    text-shadow: 2px 2px #000;
+    animation: bobble 2s ease-in-out infinite;
 }
 
-/* Button */
-.door-btn {
-    position: absolute;
-    top: 50%;
-    right: 32px;
-    transform: translateY(-50%);
-    padding: 8px 16px;
-    font-size: 8px; 
-    border: 2px solid #4a2f1a;
-    background-color: #ffd166; 
-    color: #4a2f1a;
-    cursor: pointer;
-    text-shadow: 1px 1px #fff;
-}
-
-/* Button hov */
 .door-btn {
     position: absolute;
     top: 50%;
@@ -73,11 +130,11 @@ body {
     transform: translateY(-50%);
     width: 48px;
     height: 48px;
-    border-radius: 50%; 
+    border-radius: 50%;
     border: 4px solid #4a2f1a;
-    background-color: #ffd166; 
+    background-color: #ffd166;
     color: #4a2f1a;
-    font-size: 8px; 
+    font-size: 8px;
     font-weight: bold;
     cursor: pointer;
     text-shadow: 1px 1px #fff;
@@ -89,90 +146,16 @@ body {
     transition: transform 0.1s, background-color 0.1s;
 }
 
-/* Hover effect */
 .door-btn:hover {
     background-color: #e09f3e;
     transform: translateY(-50%) scale(1.1);
     box-shadow: 6px 6px 0px #4a2f1a, -2px -2px 0px #fff inset;
-} 
-
-
-#buttonsec:hover {
-    position: absolute;
-    top: 50%;
-    right: 32px;
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-    border-radius: 50%; 
-    border: 4px solid #ffffff;
-    background-color: #fafafa; 
-    color: #ffffff;
-    font-size: 8px; 
-    font-weight: bold;
-    cursor: pointer;
-    text-shadow: 1px 1px #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 4px 4px 0px #ffffff, -2px -2px 0px #fff inset;
-    image-rendering: pixelated;
-    transition: transform 0.1s, background-color 0.1s;
 }
 
-/* Hover effect */
-#buttonsec:hover {
-    background-color: #ffffff;
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 6px 6px 0px #ffffff, -2px -2px 0px #fff inset;
-} 
-
-
-.fade-out {
-    animation: fadeOut 0.6s steps(6) forwards;
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-}
-
-#transition {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    image-rendering: pixelated;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 999;
-}
-/* Fade out overlay */
-#transition.fade-out {
-    animation: fadeOut 0.6s ease forwards;
-}
-
-/* Fade in overlay */
-#transition.fade-in {
-    animation: fadeIn 0.6s ease forwards;
-}
-
-@keyframes fadeOut {
-    from { opacity: 0; transform: scale(1); }
-    to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes fadeIn {
-    from { opacity: 1; transform: scale(1); }
-    to   { opacity: 0; transform: scale(1); }
+@keyframes bobble {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+    100% { transform: translateY(0); }
 }
 
 .door.vanish {
@@ -181,128 +164,186 @@ body {
 
 @keyframes doorVanish {
     from { opacity: 1; transform: scale(1); }
-    to   { opacity: 0; transform: scale(0); }
+    to { opacity: 0; transform: scale(0); }
 }
 
-@keyframes bobble {
-    0%   { transform: translateY(0); }
-    50%  { transform: translateY(-14px); }
-    100% { transform: translateY(0); }
-}
 
-.door-title {
-    animation: bobble 2s ease-in-out infinite;
-}
+/* ============================================
+   WHITEBOARD SECTION
+   ============================================ */
 
-#whiteboard-svg:hover {
-    fill: #663931;
-}
-
-/* Loading screen */
-#loading-screen {
-    display: none; /* hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    color: white;
-    font-family: monospace;
-    font-size: 2em;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* above everything */
-}
-
-#loading-text {
-    white-space: pre; /* preserve spaces */
-}
-
-/* Room image */
-#room-image {
+#whiteboard {
     display: none;
+    position: relative;
+}
+
+#board {
+    width: 80vw;
+    aspect-ratio: 16/9;
+}
+
+#board-text {
     position: absolute;
-    top: 5%;
-    left: 10%;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 80%;
-    height: auto;
-    image-rendering: pixelated;
-    z-index: 1;
-}
-
-/* Whiteboard text area */
-#whiteboard-text {
-    display: none;
-    position: absolute;
-    top: 18%;
-    left: 18%;
-    width: 64%;
-    height: 50%;
+    height: 60%;
     z-index: 2;
     background: transparent;
     border: none;
     resize: none;
     outline: none;
-    font-family: 'Press Start 2P', monospace;
     font-size: 13px;
     line-height: 1.8;
     color: #1b1b1b;
-    text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
 }
 
-/* Button secondary */
-#buttonsec {
-    display: none;
+#board-arrow {
     position: absolute;
-    top: 70%;
-    left: 75%;
-    width: 5%;
-    height: auto;
-    image-rendering: pixelated;
-    z-index: 1;
-    transform: rotate(90deg);
-    cursor: pointer;
-}
-
-/* Classroom image - override previous */
-#classroom-image {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    image-rendering: pixelated;
-    z-index: 1;
-}
-
-/* Speech bubble */
-#speechBubble {
-    display: none;
-    position: fixed;
-    top: -15%;
-    left: 0;
-    transform: none;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    image-rendering: pixelated;
-    z-index: 2;
-    opacity: 0.7;
-}
-
-/* Whiteboard SVG arrow button */
-#whiteboard-svg {
-    display: none;
-    position: absolute;
-    bottom: 24.8%;
-    right: 15%;
+    bottom: 12%;
+    right: 8%;
     width: 60px;
     height: 60px;
     z-index: 3;
     cursor: pointer;
     transition: fill 0.2s;
     fill: #1b1b1b;
+}
+
+#board-arrow:hover {
+    fill: #663931;
+}
+
+
+/* ============================================
+   CLASSROOM SECTION
+   ============================================ */
+
+#classroom {
+    display: none;
+    position: relative;
+    background-image: url("/static/sprites/classroom.png");
+    background-size: cover;
+}
+
+#speechBubble {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80vw;
+    aspect-ratio: auto;
+    object-fit: cover;
+    image-rendering: pixelated;
+    z-index: 2;
+}
+
+.questionBox {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70vw;
+    text-align: center;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#questionAsk {
+    color: #1b1b1b;
+    font-size: 1rem;
+}
+
+#questionAnswer {
+    padding: 0.5rem;
+    font-size: 1rem;
+    text-align: center;
+    border: 2px solid #1b1b1b;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+
+/* ============================================
+   FINAL SCORE SECTION
+   ============================================ */
+
+#final-score {
+    display: block;
+}
+
+.score-paper-shadow-1 {
+    position: absolute;
+    top: 65px;
+    left: 50%;
+    transform: translateX(-50%) translateX(15px) rotateZ(2deg);
+    width: 550px;
+    height: calc(100vh - 100px);
+    background-color: #efefef;
+    border: 2px solid #333;
+    box-sizing: border-box;
+    border-radius: 2px;
+    z-index: 0;
+}
+
+.score-paper-shadow-2 {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateX(-15px) rotateZ(-2deg);
+    width: 550px;
+    height: calc(100vh - 100px);
+    background-color: #e5e5e5;
+    border: 2px solid #333;
+    box-sizing: border-box;
+    border-radius: 2px;
+    z-index: 0;
+}
+
+#paper {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 550px;
+    height: calc(100vh - 100px);
+    background-color: #e6e6e6;
+    border: 2px solid #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-sizing: border-box;
+    border-radius: 2px;
+    z-index: 2;
+}
+
+.paper-binding {
+    position: absolute;
+    left: 15px;
+    top: 0;
+    width: 10px;
+    height: 100%;
+    background-image: radial-gradient(circle, #999 5px, #999 5px), repeating-linear-gradient(to bottom, transparent 0px, transparent 60px, white 60px, white 72px);
+    background-size: 10px 72px;
+    background-position: 0 0;
+    background-repeat: repeat-y;
+}
+
+.paper-lines {
+    width: 100%;
+    height: 100%;
+    padding: 40px 30px 40px 50px;
+    box-sizing: border-box;
+    background-image: repeating-linear-gradient(transparent, transparent 29px, #d0d0d0 29px, #d0d0d0 30px);
+    position: relative;
+}
+
+#stamp {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    z-index: 3;
+    top: 8%;
+    right: 33%;
+    rotate: 20deg;
 }
