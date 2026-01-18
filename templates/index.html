@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Teacher AI</title>
+    <title>TeachSim</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <section id="loading-screen">
-        <div id="loading-text">Loading.</div>
+        <div id="loading-text">Thinking.</div>
     </section>
     
     <div id="transition"></div>
@@ -20,8 +20,8 @@
                 Choose your <br />
                 topic:
             </h3>
-            <input type="text" id="topic_input" name="topic_input" />
-            <button class="door-btn" onclick="goToWhiteboard()">BEGIN</button>
+            <input type="text" id="topic_input" name="topic_input" value="The basic atomic model" placeholder="The basic atomic model" />
+            <button class="door-btn" onclick="setTopic()">BEGIN</button>
             <p id="display"></p>
         </div>
         <div id="menu-floor"></div>
@@ -33,16 +33,21 @@
         <div>
             <img id="board" src="{{ url_for('static', filename='sprites/whiteboard.png') }}">
             <textarea id="board-text" placeholder="Write here..." cols="250" rows="10"></textarea>
-            <svg id="board-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" onclick="goToClassRoom()"><title>arrow-top-right-circle</title><path d="M21 7V15H20V17H19V18H18V19H17V20H15V21H7V20H5V19H4V18H3V17H2V15H1V7H2V5H3V4H4V3H5V2H7V1H15V2H17V3H18V4H19V5H20V7H21M17 6V5H16V4H14V3H8V4H6V5H5V6H4V8H3V14H4V16H5V17H6V18H8V19H14V18H16V17H17V16H18V14H19V8H18V6H17M8 7H15V14H13V11H12V12H11V13H10V14H9V15H8V14H7V13H8V12H9V11H10V10H11V9H8V7Z" /></svg>
+            <svg id="board-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" onclick="submitLesson()"><title>Advance</title><path d="M21 7V15H20V17H19V18H18V19H17V20H15V21H7V20H5V19H4V18H3V17H2V15H1V7H2V5H3V4H4V3H5V2H7V1H15V2H17V3H18V4H19V5H20V7H21M17 6V5H16V4H14V3H8V4H6V5H5V6H4V8H3V14H4V16H5V17H6V18H8V19H14V18H16V17H17V16H18V14H19V8H18V6H17M8 7H15V14H13V11H12V12H11V13H10V14H9V15H8V14H7V13H8V12H9V11H10V10H11V9H8V7Z" /></svg>
         </div>
     </section>
 
     <section id="classroom">
-        <img id="speechBubble" src="{{ url_for('static', filename='sprites/speechBubble.png') }}">
+        <!--<img id="speechBubble" src="{{ url_for('static', filename='sprites/speechBubble.png') }}">-->
         <div class="questionBox">
             <p id="questionAsk">Who invented avocados?</p>
-            <input type="text" id="questionAnswer" placeholder="Type your answer here..." />
+            <textarea type="text" id="questionAnswer" placeholder="Type your answer here..." style="width:100%;resize:vertical;" rows="4"></textarea>
+            <div style="text-align: right; height: 40px;">
+                <svg id="question-arrow" style="height: 100%; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" onclick="confirmAnswer()"><title>Send</title><path d="M21 7V15H20V17H19V18H18V19H17V20H15V21H7V20H5V19H4V18H3V17H2V15H1V7H2V5H3V4H4V3H5V2H7V1H15V2H17V3H18V4H19V5H20V7H21M17 6V5H16V4H14V3H8V4H6V5H5V6H4V8H3V14H4V16H5V17H6V18H8V19H14V18H16V17H17V16H18V14H19V8H18V6H17M8 7H15V14H13V11H12V12H11V13H10V14H9V15H8V14H7V13H8V12H9V11H10V10H11V9H8V7Z" /></svg>
+            </div>
         </div>
+
+        <div id="students-area"></div>
     </section>
 
     <div id="final-score">
@@ -53,15 +58,21 @@
         <!-- Main paper -->
         <div id="paper">
             <div class="paper-binding"></div>
-            <div class="paper-lines"></div>
-        </div>
+            <div class="paper-lines">
+                <!-- Stamp -->
+                <svg id="stamp" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#ff0000" stroke-width="8" opacity="0.8"/>
+                    <circle cx="100" cy="100" r="70" fill="none" stroke="#ff0000" stroke-width="3" opacity="0.6"/>
+                    <text x="107" y="122" font-size="50" font-weight="bold" text-anchor="middle" fill="#ff0000" font-family="Arial, sans-serif" id="stamp-result">A+</text>
+                </svg>
 
-        <!-- Stamp -->
-        <svg id="stamp" viewBox="0 0 200 200">
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#ff0000" stroke-width="8" opacity="0.8"/>
-            <circle cx="100" cy="100" r="70" fill="none" stroke="#ff0000" stroke-width="3" opacity="0.6"/>
-            <text x="107" y="122" font-size="50" font-weight="bold" text-anchor="middle" fill="#ff0000" font-family="Arial, sans-serif">A+</text>
-        </svg>
+                <h2 class="results">RESULTS</h2>
+                <ul id="feedback">
+                    <li>1</li>
+                    <li>2</li>
+                </ul>
+            </div>
+        </div>
     </div>
     
     <script src="{{ url_for('static', filename='script.js') }}"></script>   
