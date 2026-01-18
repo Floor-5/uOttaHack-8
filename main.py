@@ -11,9 +11,9 @@ CORS(app)
 def home():
     return render_template("index.html")
 
-@app.route("/page3")
-def page3():
-    return render_template("page3.html")
+@app.route("/score")
+def score():
+    return render_template("score.html")
 
 @app.route('/api/data', methods=['GET'])
 def get_data():
