@@ -8,7 +8,7 @@ let questions = [
         ]
     }*/
 ];
-let topic = ''; // Keep track of the topic for display purposes
+let topic = ""; // Keep track of the topic for display purposes
 
 async function promptRequest(prompt, model='xiaomi/mimo-v2-flash:free', constraints='Use only one sentence to respond.') {
     // Prompt an AI model with a request using the Python backend
@@ -78,15 +78,10 @@ async function submitLesson() {
     // Hide the loading indicators
     loading_icon.style.display = "none"
 
-    // Parse the JSON inside the data
-    let parseddata = [];
-    for(questionarray of data.questions) {
-        parseddata.push(JSON.parse(questionarray))
-    }
+    // Each element will be sent to the student's speech 
+    document.querySelector("#questions").innerText = data.map(d => d.question).join("\n\n")
 
-    document.querySelector("#questions").innerText = parseddata.map(obj => obj.questions).flat().map(item => item.question).join("\n\n");
-
-    // Store the questions in a global variable -- still indexed in the order of the AI model
+    // Store the questions in a global variable
     questions = parseddata;
     
     return parseddata;
