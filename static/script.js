@@ -39,7 +39,9 @@ function enterDoor() {
         setTimeout(() => btn.disabled = false, 600);
     }, 600);
 }
-
+function buttonsecclick() {
+    console.log("pressed")
+}
 class Student { 
     constructor(eleid,name,path) {
       this.name = name;
