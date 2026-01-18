@@ -22,9 +22,10 @@ class LessonPlan(BaseModel):
     subtopics: List[str] = Field(description="The lesson's subtopics, e.g. what needs to be taught for the topic to be understood")
 
 class AIModelDefinition:
-    def __init__(self, name: str, temperature: int):
+    def __init__(self, name: str, temperature: int, service:str="openrouter"):
         self.name = name
         self.temperature = temperature
+        self.service = service
 
     def __repr__(self):
         return '<AIModelDefinition: ' + (self.name) + ' @ ' + (self.temperature) + '>'
@@ -33,16 +34,16 @@ class AIModelDefinition:
         return self.name
     
     def prompt(self, message:str, constraints=None):
-        '''Prompts the AI model using its inherant temperature value'''
-        return prompt_AI(prompt=message, constraints=constraints, model=self.name, service="openrouter", temperature=self.temperature)
+        '''Prompts the AI model using its inherant temperature value. The result is a JSON-compatible string.'''
+        return prompt_AI(prompt=message, constraints=constraints, model=self.name, service=self.service, temperature=self.temperature)
     
 # Gemini client for gemini api calls
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
-def prompt_AI(prompt:str, constraints=None, model="google/gemini-2.0-flash-lite-001", service="openrouter", temperature=0) -> dict:
+def prompt_AI(prompt:str, constraints=None, model="google/gemini-2.0-flash-lite-001", service="openrouter", temperature=0) -> str:
     '''
     Prompt any AI using openrouter or the Gemini API (coming soon). 
-    The result will be returned as a JSON-compatiable dict. 
+    The result will be returned as a string. 
     '''
     init_time = int(time.time()) # get the initial call time
     error_info = 'Something went wrong.'
@@ -75,7 +76,7 @@ def prompt_AI(prompt:str, constraints=None, model="google/gemini-2.0-flash-lite-
                 }
             )
 
-            # Get the model API's response as a dictionary
+            # Get the model API's response as a json string
             responsedict = response.json()
             
             if(not 'choices' in responsedict.keys()):

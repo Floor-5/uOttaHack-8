@@ -3,28 +3,11 @@ let questions = [
         "questions": [ 
             {
                 question: "Why?", // The question to be asked to the user, as a string
-                difficulty: 0, // 0 is easy, 3 is hard
             }
         ]
     }*/
 ];
 let topic = ""; // Keep track of the topic for display purposes
-
-async function promptRequest(prompt, model='xiaomi/mimo-v2-flash:free', constraints='Use only one sentence to respond.') {
-    // Prompt an AI model with a request using the Python backend
-    return await fetch(
-        'http://127.0.0.1:5000/api/prompt',
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                prompt,
-                model,
-                constraints
-            })
-        }
-    ).then(resp => resp.json());
-}
 
 async function promptAllModels(prompt, constraints='Use only one sentence to respond.') {
     return await fetch(
@@ -82,7 +65,7 @@ async function submitLesson() {
     document.querySelector("#questions").innerText = data.map(d => d.question).join("\n\n")
 
     // Store the questions in a global variable
-    questions = parseddata;
+    questions = data;
     
-    return parseddata;
+    return data;
 }
