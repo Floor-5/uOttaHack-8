@@ -52,20 +52,21 @@ async function switchToClassroom() {
     const classroomImage = document.getElementById("classroom-image");
     const whiteboardSvg = document.getElementById("whiteboard-svg");
     const whiteboardText = document.getElementById("whiteboard-text");
-
+    const speechBubble = document.getElementById("speechBubble");
     // Start fade overlay
     transition.classList.remove("fade-in");
     transition.classList.add("fade-out");
 
-    await wait(600); // wait for fade-out to complete
-
-    // Swap to classroom
-    document.querySelector(".door-title").innerText = "ROOM 2";
-    document.getElementById("display").innerText = "You entered the classroom!";
-    roomImage.style.display = "none";
-    whiteboardSvg.style.display = "none";
-    whiteboardText.style.display = "none";
-    classroomImage.style.display = "block";
+    setTimeout(() => {
+        // Swap to classroom
+        document.querySelector(".door-title").innerText = "ROOM 2";
+        document.getElementById("display").innerText = "You entered the classroom!";
+        roomImage.style.display = "none";
+        whiteboardSvg.style.display = "none";
+        whiteboardText.style.display = "none";
+        classroomImage.style.display = "block";
+        speechBubble.style.display = "block";
+    }, 600)
 
     // Fade overlay back in
     transition.classList.remove("fade-out");
